@@ -1,0 +1,83 @@
+:root { --primary: #FF6F61; --secondary: #4CAF50; --bg: #FFF3E0; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
+    margin: 0; height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden; text-align: center;
+    user-select: none;
+    touch-action: none;
+}
+
+.screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; animation: popIn 0.5s; }
+.active { display: flex; }
+
+.btn-big {
+    width: 85%; padding: 15px; margin: 8px;
+    font-size: 20px; border: none; border-radius: 50px;
+    cursor: pointer; color: white; box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+    transition: transform 0.1s; font-weight: bold;
+}
+.btn-big:active { transform: translateY(4px); box-shadow: none; }
+
+.btn-alpha { background: linear-gradient(45deg, #FF9800, #FF5722); }
+.btn-num { background: linear-gradient(45deg, #2196F3, #3F51B5); }
+.btn-draw { background: linear-gradient(45deg, #9C27B0, #E91E63); }
+
+.btn-home { 
+    position: absolute; top: 10px; left: 10px; 
+    background: #FF5252; width: 40px; height: 40px; 
+    border-radius: 50%; color: white; font-size: 20px; 
+    border: none; cursor: pointer; z-index: 100;
+    box-shadow: 0 4px 5px rgba(0,0,0,0.2);
+}
+
+.card {
+    background: white; width: 90%; height: 80%;
+    border-radius: 25px; border: 4px solid var(--primary);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: space-evenly;
+    position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 10px;
+}
+
+.big-letter { font-size: 70px; color: var(--secondary); font-weight: bold; margin: 0; line-height: 1; }
+.image-container { height: 40%; width: 100%; display: flex; align-items: center; justify-content: center; }
+.main-img { font-size: 80px; animation: bounce 2s infinite; }
+.counting-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 90%; }
+.count-img { font-size: 35px; margin: 2px; }
+
+.sentence-box {
+    background: #E8F5E9; padding: 10px; border-radius: 15px; width: 90%;
+    border: 2px dashed #4CAF50; cursor: pointer;
+}
+.nav-controls { display: flex; gap: 15px; margin-top: 10px; }
+.nav-btn { width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; background: #eee; }
+
+/* Drawing Board Styles */
+#draw-screen { background: #fff; position: relative; }
+#drawing-board { background: white; cursor: crosshair; touch-action: none; }
+.toolbar {
+    position: absolute; bottom: 10px; 
+    background: rgba(255,255,255,0.9); 
+    padding: 10px; border-radius: 50px;
+    display: flex; gap: 10px; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border: 2px solid #ddd;
+}
+.color-btn {
+    width: 35px; height: 35px; border-radius: 50%; border: 2px solid white;
+    cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.color-btn.active-color { transform: scale(1.2); border: 2px solid #333; }
+.tool-btn {
+    padding: 5px 15px; border-radius: 20px; border: none;
+    background: #607D8B; color: white; font-weight: bold; cursor: pointer;
+}
+.eraser { background: #FF9800; }
+.clear-all { background: #F44336; }
+
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
