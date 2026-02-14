@@ -1,96 +1,98 @@
-:root { --primary: #FF6F61; --secondary: #4CAF50; --bg: #FFF3E0; }
+:root { --primary: #FF6F61; --bg: #FFF3E0; }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
     background-color: var(--bg);
     margin: 0; height: 100vh;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     overflow: hidden; text-align: center;
-    user-select: none;
-    touch-action: none;
+    user-select: none; touch-action: none;
 }
 
+/* স্প্ল্যাশ স্ক্রিন */
+#splash-screen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: 9999; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    color: white;
+}
+.splash-active { display: flex !important; }
+.logo-bounce { font-size: 100px; animation: bounce 2s infinite; }
+.start-btn-main {
+    padding: 15px 40px; font-size: 24px; background: #FF9800;
+    color: white; border: none; border-radius: 50px;
+    margin-top: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* সাধারণ স্ক্রিন */
 .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; animation: popIn 0.5s; }
 .active { display: flex; }
 
-.btn-big {
-    width: 85%; padding: 15px; margin: 8px;
-    font-size: 20px; border: none; border-radius: 50px;
-    cursor: pointer; color: white; box-shadow: 0 5px 0 rgba(0,0,0,0.2);
-    transition: transform 0.1s; font-weight: bold;
+/* মেনু গ্রিড */
+.menu-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 95%; }
+.btn-menu {
+    width: 45%; padding: 20px 10px; font-size: 18px; border: none;
+    border-radius: 20px; color: white; cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2); font-weight: bold;
 }
-.btn-big:active { transform: translateY(4px); box-shadow: none; }
-
-.btn-alpha { background: linear-gradient(45deg, #FF9800, #FF5722); }
-.btn-num { background: linear-gradient(45deg, #2196F3, #3F51B5); }
-.btn-draw { background: linear-gradient(45deg, #9C27B0, #E91E63); }
+.btn-alpha { background: #FF5722; }
+.btn-num { background: #2196F3; }
+.btn-draw { background: #9C27B0; }
+.btn-quiz { background: #4CAF50; }
+.btn-rhyme { background: #E91E63; }
 
 .btn-home { 
-    position: absolute; top: 10px; left: 10px; 
-    background: #FF5252; width: 40px; height: 40px; 
-    border-radius: 50%; color: white; font-size: 20px; 
+    position: absolute; top: 10px; left: 10px; background: #FF5252; 
+    width: 40px; height: 40px; border-radius: 50%; color: white; 
     border: none; cursor: pointer; z-index: 100;
-    box-shadow: 0 4px 5px rgba(0,0,0,0.2);
 }
 
+/* কার্ড ও পড়া */
 .card {
-    background: white; width: 90%; height: 80%;
-    border-radius: 25px; border: 4px solid var(--primary);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: space-evenly;
-    position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    padding: 10px;
+    background: white; width: 90%; height: 75%; border-radius: 25px;
+    border: 4px solid var(--primary); display: flex; flex-direction: column;
+    align-items: center; justify-content: space-evenly; padding: 10px;
 }
-
-.big-letter { font-size: 70px; color: var(--secondary); font-weight: bold; margin: 0; line-height: 1; }
+.big-letter { font-size: 80px; color: #4CAF50; font-weight: bold; margin: 0; }
+.main-img { font-size: 90px; animation: bounce 2s infinite; }
 .image-container { height: 40%; width: 100%; display: flex; align-items: center; justify-content: center; }
-.main-img { font-size: 80px; animation: bounce 2s infinite; }
-.counting-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 90%; }
-.count-img { font-size: 35px; margin: 2px; }
+.counting-grid { display: flex; flex-wrap: wrap; justify-content: center; }
+.count-img { font-size: 40px; margin: 2px; }
+.sentence-box { background: #E8F5E9; padding: 10px; border-radius: 15px; width: 90%; border: 2px dashed #4CAF50; cursor: pointer;}
+.nav-controls { display: flex; gap: 20px; }
+.nav-btn { width: 55px; height: 55px; border-radius: 50%; border: none; font-size: 28px; background: #eee; cursor: pointer; }
 
-.sentence-box {
-    background: #E8F5E9; padding: 10px; border-radius: 15px; width: 90%;
-    border: 2px dashed #4CAF50; cursor: pointer;
+/* কুইজ ডিজাইন */
+.quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; width: 90%; }
+.quiz-option { 
+    font-size: 60px; background: white; padding: 15px; 
+    border-radius: 15px; box-shadow: 0 5px 10px rgba(0,0,0,0.1); 
+    cursor: pointer; border: 3px solid transparent;
 }
-.nav-controls { display: flex; gap: 15px; margin-top: 10px; }
-.nav-btn { width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; background: #eee; }
+.correct { background: #C8E6C9; border-color: green; }
+.wrong { background: #FFCDD2; border-color: red; }
+.result-box { margin-top: 15px; font-size: 20px; font-weight: bold; height: 30px; }
 
-/* Drawing Board Styles */
+/* ড্রয়িং ও ট্রেসিং */
 #draw-screen { background: #fff; position: relative; }
+.trace-nav { 
+    position: absolute; top: 60px; background: rgba(255,255,255,0.95); 
+    padding: 5px 20px; border-radius: 30px; display: flex; gap: 20px; 
+    z-index: 10; border: 1px solid #ddd; align-items: center;
+}
 #drawing-board { background: white; cursor: crosshair; touch-action: none; }
-.toolbar {
-    position: absolute; bottom: 10px; 
-    background: rgba(255,255,255,0.9); 
-    padding: 10px; border-radius: 50px;
-    display: flex; gap: 10px; 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    border: 2px solid #ddd;
+.toolbar { 
+    position: absolute; bottom: 10px; background: rgba(255,255,255,0.9); 
+    padding: 10px; border-radius: 50px; display: flex; gap: 10px; 
+    border: 1px solid #ddd; z-index: 10;
 }
-.color-btn {
-    width: 35px; height: 35px; border-radius: 50%; border: 2px solid white;
-    cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-.color-btn.active-color { transform: scale(1.2); border: 2px solid #333; }
-.tool-btn {
-    padding: 5px 15px; border-radius: 20px; border: none;
-    background: #607D8B; color: white; font-weight: bold; cursor: pointer;
-}
-.eraser { background: #FF9800; }
-.clear-all { background: #F44336; }
+.color-btn { width: 35px; height: 35px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+.active-color { border: 2px solid #333; transform: scale(1.2); }
+.tool-btn { padding: 5px 15px; border-radius: 20px; border: none; color: white; font-weight: bold; }
+.eraser { background: #FF9800; } .clear-all { background: #F44336; }
+.btn-big { width: 85%; padding: 15px; margin: 8px; font-size: 20px; border: none; border-radius: 50px; color: white; font-weight: bold; }
 
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-/* ট্রেসিং নেভিগেশন স্টাইল */
-.trace-nav {
-    position: absolute;
-    top: 60px; /* হোম বাটনের নিচে */
-    background: rgba(255, 255, 255, 0.8);
-    padding: 5px 20px;
-    border-radius: 30px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    z-index: 10;
-}
