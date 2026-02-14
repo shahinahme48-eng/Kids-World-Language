@@ -75,13 +75,28 @@ body {
 .wrong { background: #FFCDD2; border-color: red; }
 .result-box { margin-top: 15px; font-size: 20px; font-weight: bold; height: 30px; }
 
-/* ড্রয়িং ও ট্রেসিং */
+/* ড্রয়িং ও ট্রেসিং (আপডেট করা) */
 #draw-screen { background: #fff; position: relative; }
 .trace-nav { 
     position: absolute; top: 60px; background: rgba(255,255,255,0.95); 
     padding: 5px 20px; border-radius: 30px; display: flex; gap: 20px; 
     z-index: 10; border: 1px solid #ddd; align-items: center;
 }
+
+/* নতুন: শেপ বার (Shape Bar) */
+.shape-bar {
+    position: absolute; bottom: 80px; width: 95%;
+    display: flex; gap: 10px; overflow-x: auto; /* স্ক্রল হবে */
+    padding: 10px 5px; background: rgba(255,255,255,0.8);
+    border-radius: 15px; justify-content: flex-start;
+}
+.shape-btn {
+    font-size: 30px; background: white; border: 2px solid #ddd;
+    border-radius: 10px; padding: 5px 15px; cursor: pointer;
+    min-width: 60px;
+}
+.shape-btn:active { transform: scale(0.9); background: #fff3e0; }
+
 #drawing-board { background: white; cursor: crosshair; touch-action: none; }
 .toolbar { 
     position: absolute; bottom: 10px; background: rgba(255,255,255,0.9); 
