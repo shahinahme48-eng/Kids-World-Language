@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kids World Language</title>
+    <style>
+        /* মোবাইল অ্যাপের মত লুক */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* স্ক্রল বন্ধ */
+        }
+
+        .card {
+            background: white;
+            width: 85%;
+            height: 70%;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            padding: 20px;
+            position: relative;
+        }
+
+        .emoji { font-size: 80px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); }
+        
+        .word-container { width: 100%; text-align: center; }
+        
+        .main-word { font-size: 32px; color: #333; font-weight: bold; margin: 10px 0; }
+        
+        .sub-languages {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .lang-box {
+            background: #f0f2f5;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer; /* ক্লিক করলে সাউন্ড হবে */
+        }
+
+        .lang-title { font-size: 10px; color: #888; text-transform: uppercase; }
+
+        .nav-btn {
+            position: absolute;
+            bottom: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: #FF6F61;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(255,111,97,0.4);
+        }
+        .prev { left: 20px; background: #FFB74D; }
+        .next { right: 20px; }
+
+        /* স্পিকার আইকন */
+        .speaker-icon { font-size: 12px; margin-left: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div id="emoji" class="emoji">🍎</div>
+        
+        <div class="word-container">
+            <div class="main-word" id="enWord" onclick="speak('en')">Apple 🔊</div>
+            
+            <div class="sub-languages">
+                <div class="lang-box" onclick="speak('bn')">
+                    <div class="lang-title">বাংলা</div>
+                    <span id="bnWord">আপেল</span>
+                </div>
+                <div class="lang-box" onclick="speak('hi')">
+                    <div class="lang-title">हिन्दी</div>
+                    <span id="hiWord">सेब</span>
+                </div>
+                <div class="lang-box" onclick="speak('ar')">
+                    <div class="lang-title">العربية</div>
+                    <span id="arWord">تفاحة</span>
+                </div>
+                <div class="lang-box" onclick="speak('es')">
+                    <div class="lang-title">Spanish</div>
+                    <span id="esWord">Manzana</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
+        <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
+    </div>
+
+    <script>
+        const data = [
+            { em: "🍎", en: "Apple", bn: "আপেল", hi: "सेब", ar: "تفاحة", es: "Manzana" },
+            { em: "🐱", en: "Cat", bn: "বিড়াল", hi: "बिल्ली", ar: "قطة", es: "Gato" },
+            { em: "🐶", en: "Dog", bn: "কুকুর", hi: "कुत्ता", ar: "كلب", es: "Perro" },
+            { em: "🚗", en: "Car", bn: "গাড়ি", hi: "गाड़ी", ar: "سيارة", es: "Coche" },
+            { em: "🌧️", en: "Rain", bn: "বৃষ্টি", hi: "बारिश", ar: "مطر", es: "Lluvia" }
+        ];
+
+        let index = 0;
+
+        function loadSlide() {
+            const item = data[index];
+            document.getElementById('emoji').innerText = item.em;
+            document.getElementById('enWord').innerHTML = item.en + ' 🔊';
+            document.getElementById('bnWord').innerText = item.bn;
+            document.getElementById('hiWord').innerText = item.hi;
+            document.getElementById('arWord').innerText = item.ar;
+            document.getElementById('esWord').innerText = item.es;
+        }
+
+        function changeSlide(direction) {
+            index += direction;
+            if (index >= data.length) index = 0;
+            if (index < 0) index = data.length - 1;
+            loadSlide();
+        }
+
+        // অটোমেটিক ভয়েস (Text to Speech)
+        function speak(langCode) {
+            const item = data[index];
+            let text = "";
+            let lang = "en-US";
+
+            if(langCode === 'en') { text = item.en; lang = "en-US"; }
+            else if(langCode === 'bn') { text = item.bn; lang = "bn-BD"; }
+            else if(langCode === 'hi') { text = item.hi; lang = "hi-IN"; }
+            else if(langCode === 'ar') { text = item.ar; lang = "ar-SA"; }
+            else if(langCode === 'es') { text = item.es; lang = "es-ES"; }
+
+            // ব্রাউজারের স্পিচ ইঞ্জিন ব্যবহার করবে
+            let utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        loadSlide();
+    </script>
+</body>
+</html>
