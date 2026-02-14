@@ -50,14 +50,22 @@
     <!-- ৪. আঁকাআঁকি স্ক্রিন -->
     <div id="draw-screen" class="screen">
         <button class="btn-home" onclick="goHome()">🏠</button>
+        
+        <!-- নতুন: অক্ষর পরিবর্তনের বাটন -->
+        <div class="trace-nav">
+            <button class="nav-btn" onclick="changeTrace(-1)">❮</button>
+            <span id="trace-status" style="font-weight:bold; color:#555; font-size: 18px;">সাদা পেজ</span>
+            <button class="nav-btn" onclick="changeTrace(1)">❯</button>
+        </div>
+
         <canvas id="drawing-board"></canvas>
+        
         <div class="toolbar">
             <div class="color-btn" style="background:black" onclick="setColor('black', this)"></div>
             <div class="color-btn" style="background:red" onclick="setColor('red', this)"></div>
             <div class="color-btn" style="background:blue" onclick="setColor('blue', this)"></div>
-            <div class="color-btn" style="background:green" onclick="setColor('green', this)"></div>
             <button class="tool-btn eraser" onclick="setEraser()">মুছি</button>
-            <button class="tool-btn clear-all" onclick="clearCanvas()">সব সাফ</button>
+            <button class="tool-btn clear-all" onclick="clearCanvas()">সাফ</button>
         </div>
     </div>
 
