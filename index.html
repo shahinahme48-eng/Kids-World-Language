@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kids Super App</title>
+    <title>Kids Super App Pro Max</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ১. স্প্ল্যাশ স্ক্রিন (শুরুতে এটা আসবে) -->
+    <!-- ১. স্প্ল্যাশ স্ক্রিন -->
     <div id="splash-screen" class="splash-active">
         <div class="logo-bounce">🌟</div>
         <h1>কিডস জোন</h1>
         <p>খেলি আর শিখি</p>
-        <!-- সাউন্ড চালু করার জন্য এই বাটন জরুরি -->
         <button class="start-btn-main" onclick="startApp()">শুরু করি ▶</button>
     </div>
 
-    <!-- ব্যাকগ্রাউন্ড মিউজিক (অনলাইন লিংক) -->
+    <!-- ব্যাকগ্রাউন্ড মিউজিক -->
     <audio id="bg-music" loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
     </audio>
@@ -30,9 +29,9 @@
         <div class="menu-grid">
             <button class="btn-menu btn-alpha" onclick="selectCategory('alphabet')">🅰️ বর্ণমালা</button>
             <button class="btn-menu btn-num" onclick="selectCategory('number')">🔢 গণনা</button>
-            <button class="btn-menu btn-draw" onclick="startDrawing()">🎨 আঁকি</button>
-            <button class="btn-menu btn-quiz" onclick="startQuiz()">🧠 কুইজ</button>
-            <button class="btn-menu btn-rhyme" onclick="showScreen('rhyme-screen')">🎵 ছড়া</button>
+            <button class="btn-menu btn-draw" onclick="selectCategory('draw')">🎨 আঁকি (Shapes)</button>
+            <button class="btn-menu btn-quiz" onclick="selectCategory('quiz')">🧠 কুইজ</button>
+            <button class="btn-menu btn-rhyme" onclick="showScreen('rhyme-screen')">🎵 ছড়া ও গান</button>
         </div>
     </div>
 
@@ -40,10 +39,10 @@
     <div id="lang-screen" class="screen">
         <button class="btn-home" onclick="goHome()">🏠</button>
         <h2>ভাষা বেছে নাও</h2>
-        <button class="btn-big" style="background:#009688" onclick="startLearning('bn')">🇧🇩 বাংলা</button>
-        <button class="btn-big" style="background:#3F51B5" onclick="startLearning('en')">🇺🇸 English</button>
-        <button class="btn-big" style="background:#FF5722" onclick="startLearning('hi')">🇮🇳 हिन्दी</button>
-        <button class="btn-big" style="background:#4CAF50" onclick="startLearning('ar')">🇸🇦 العربية</button>
+        <button class="btn-big" style="background:#009688" onclick="processLanguageSelection('bn')">🇧🇩 বাংলা</button>
+        <button class="btn-big" style="background:#3F51B5" onclick="processLanguageSelection('en')">🇺🇸 English</button>
+        <button class="btn-big" style="background:#FF5722" onclick="processLanguageSelection('hi')">🇮🇳 हिन्दी</button>
+        <button class="btn-big" style="background:#4CAF50" onclick="processLanguageSelection('ar')">🇸🇦 العربية</button>
     </div>
 
     <!-- ৪. পড়ার স্ক্রিন -->
@@ -65,23 +64,36 @@
         </div>
     </div>
 
-    <!-- ৫. আঁকাআঁকি স্ক্রিন -->
+    <!-- ৫. আঁকাআঁকি স্ক্রিন (আপডেট করা হয়েছে) -->
     <div id="draw-screen" class="screen">
         <button class="btn-home" onclick="goHome()">🏠</button>
         
         <!-- অক্ষর পাল্টানোর বাটন -->
         <div class="trace-nav">
             <button class="nav-btn" onclick="changeTrace(-1)">❮</button>
-            <span id="trace-status" style="font-weight:bold; color:#555;">সাদা পেজ</span>
+            <span id="trace-status" style="font-weight:bold; color:#555;">লিখ: A</span>
             <button class="nav-btn" onclick="changeTrace(1)">❯</button>
         </div>
 
         <canvas id="drawing-board"></canvas>
         
+        <!-- নতুন: শেপ বাটন বার (Shapes) -->
+        <div class="shape-bar">
+            <button class="shape-btn" onclick="setTraceShape('🌻', 'ফুল')">🌻</button>
+            <button class="shape-btn" onclick="setTraceShape('⛵', 'নৌকা')">⛵</button>
+            <button class="shape-btn" onclick="setTraceShape('🏠', 'বাড়ি')">🏠</button>
+            <button class="shape-btn" onclick="setTraceShape('🚗', 'গাড়ি')">🚗</button>
+            <button class="shape-btn" onclick="setTraceShape('🐦', 'পাখি')">🐦</button>
+            <button class="shape-btn" onclick="setTraceShape('🐟', 'মাছ')">🐟</button>
+            <button class="shape-btn" onclick="setTraceShape('🦋', 'প্রজাপতি')">🦋</button>
+        </div>
+
+        <!-- কালার টুলবার -->
         <div class="toolbar">
             <div class="color-btn" style="background:black" onclick="setColor('black', this)"></div>
             <div class="color-btn" style="background:red" onclick="setColor('red', this)"></div>
             <div class="color-btn" style="background:blue" onclick="setColor('blue', this)"></div>
+            <div class="color-btn" style="background:green" onclick="setColor('green', this)"></div>
             <button class="tool-btn eraser" onclick="setEraser()">মুছি</button>
             <button class="tool-btn clear-all" onclick="clearCanvas()">সাফ</button>
         </div>
@@ -96,14 +108,16 @@
         <button class="btn-big" style="background:#FF9800; margin-top:20px;" onclick="nextQuestion()">পরের প্রশ্ন ➡</button>
     </div>
 
-    <!-- ৭. ছড়ার স্ক্রিন -->
+    <!-- ৭. ছড়ার স্ক্রিন (আরও ছড়া যোগ করা হয়েছে) -->
     <div id="rhyme-screen" class="screen">
         <button class="btn-home" onclick="goHome()">🏠</button>
-        <h2>মজার ছড়া</h2>
+        <h2>মজার ছড়া ও গান</h2>
         <div class="menu-grid">
             <button class="btn-menu btn-rhyme" onclick="playRhyme('ata')">🐦 আতা গাছে</button>
+            <button class="btn-menu btn-rhyme" onclick="playRhyme('chad')">🌙 চাঁদ মামা</button>
             <button class="btn-menu btn-rhyme" onclick="playRhyme('twinkle')">✨ Twinkle Star</button>
             <button class="btn-menu btn-rhyme" onclick="playRhyme('jony')">👶 Johny Johny</button>
+            <button class="btn-menu btn-rhyme" onclick="playRhyme('rain')">🌧️ Rain Rain</button>
             <button class="btn-menu btn-rhyme" onclick="stopRhyme()">⏹ থামাও</button>
         </div>
         <div style="margin-top:20px; font-size:60px; animation: bounce 2s infinite;">🎶</div>
