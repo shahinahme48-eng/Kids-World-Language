@@ -16,7 +16,7 @@ const numberData = {
 };
 
 // ==========================================
-//  অ্যাপ কন্ট্রোল
+//  অ্যাপ কন্ট্রোল (এখানেই ঠিক করা হয়েছে)
 // ==========================================
 let currentCategory = 'alphabet';
 let currentLang = 'bn';
@@ -24,15 +24,30 @@ let currentIndex = 0;
 let activeList = [];
 
 function startApp() {
-    document.getElementById('splash-screen').style.display = 'none';
+    // ১. স্প্ল্যাশ স্ক্রিন বন্ধ করা
+    const splash = document.getElementById('splash-screen');
+    splash.style.display = 'none';
+    splash.classList.remove('splash-active');
+
+    // ২. হোম স্ক্রিন চালু করা (আগে এই লাইনটি মিসিং ছিল)
+    const home = document.getElementById('home-screen');
+    home.classList.add('active');
+
+    // ৩. মিউজিক চালু করা
     const music = document.getElementById('bg-music');
-    music.volume = 0.2; // ভলিউম কম রাখা হয়েছে
-    // ইন্টারনেট থাকলে মিউজিক বাজবে
-    music.play().catch(e => console.log("Music play failed - requires interaction"));
+    if(music) {
+        music.volume = 0.2; 
+        music.play().catch(e => console.log("Music play failed"));
+    }
 }
 
 function showScreen(id) {
+    // সব স্ক্রিন থেকে active ক্লাস সরিয়ে ফেলা
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // স্প্ল্যাশ স্ক্রিন যাতে আর না আসে
+    document.getElementById('splash-screen').classList.remove('splash-active');
+    
+    // নতুন স্ক্রিন দেখানো
     document.getElementById(id).classList.add('active');
 }
 
@@ -90,9 +105,7 @@ function changeItem(dir) {
 }
 
 function speakCurrent() {
-    // আগের সাউন্ড বন্ধ করা
     window.speechSynthesis.cancel();
-
     const item = activeList[currentIndex];
     let text = (currentCategory === 'alphabet') ? item.w : item.t;
     let langCode = 'en-US';
@@ -116,7 +129,6 @@ function startQuiz() {
 
 function nextQuestion() {
     document.getElementById('quiz-result').innerText = "";
-    // ডিফল্ট হিসেবে ইংলিশ ডাটা ব্যবহার হবে
     const list = alphabetData['en']; 
     const correctIndex = Math.floor(Math.random() * list.length);
     const correctItem = list[correctIndex];
@@ -148,7 +160,6 @@ function checkAnswer(selected, correct, element) {
         element.classList.add('correct');
         resBox.innerText = "✅ সঠিক উত্তর!";
         resBox.style.color = "green";
-        // কারেক্ট হলে সাউন্ড
         let u = new SpeechSynthesisUtterance("Correct!");
         window.speechSynthesis.speak(u);
     } else {
@@ -166,16 +177,12 @@ function playRhyme(name) {
     let text = "";
     let lang = "en-US";
     
-    if(name === 'ata') {
-        text = "আতা গাছে তোতা পাখি, ডালিম গাছে মৌ। এত ডাকি তবু কথা, কও না কেন বউ।";
-        lang = "bn-BD";
-    }
-    else if(name === 'twinkle') text = "Twinkle, twinkle, little star. How I wonder what you are.";
-    else if(name === 'jony') text = "Johny Johny. Yes Papa? Eating sugar? No, papa.";
+    if(name === 'ata') { text = "আতা গাছে তোতা পাখি, ডালিম গাছে মৌ।"; lang = "bn-BD"; }
+    else if(name === 'twinkle') text = "Twinkle, twinkle, little star.";
+    else if(name === 'jony') text = "Johny Johny. Yes Papa?";
     
     let u = new SpeechSynthesisUtterance(text);
-    u.lang = lang; 
-    u.rate = 0.9; 
+    u.lang = lang; u.rate = 0.9; 
     window.speechSynthesis.speak(u);
 }
 
