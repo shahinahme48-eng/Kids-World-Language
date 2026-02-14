@@ -3,237 +3,404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kids World Language Book</title>
+    <title>Nursery World Book</title>
     <style>
-        /* ডিজাইন সেকশন */
+        /* ডিজাইন (CSS) */
+        :root { --primary: #FF6F61; --secondary: #4CAF50; --bg: #FFF3E0; }
+        
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            height: 100vh;
-            overflow: hidden;
-            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0; height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            overflow: hidden; text-align: center;
         }
 
-        /* স্ক্রিন হাইড/শো করার জন্য */
-        .screen {
-            display: none;
-            height: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.5s;
-        }
-
+        /* স্ক্রিন কন্ট্রোল */
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; animation: popIn 0.5s; }
         .active { display: flex; }
 
-        /* ১. স্টার্ট স্ক্রিন ডিজাইন */
-        #start-screen { background-color: #FFDEE9; background-image: linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%); }
-        .hero-img { font-size: 100px; animation: bounce 2s infinite; cursor: pointer; }
-        .start-btn {
-            background: #FF6F61; color: white; border: none;
-            padding: 15px 40px; font-size: 22px; border-radius: 50px;
-            margin-top: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        /* বাটন ডিজাইন */
+        .btn-big {
+            width: 80%; padding: 15px; margin: 10px;
+            font-size: 20px; border: none; border-radius: 50px;
+            cursor: pointer; color: white; box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        .btn-big:active { transform: translateY(4px); box-shadow: none; }
+        .btn-alpha { background: linear-gradient(45deg, #FF9800, #FF5722); }
+        .btn-num { background: linear-gradient(45deg, #2196F3, #3F51B5); }
+        
+        /* হোম বাটন */
+        .btn-home { 
+            position: absolute; top: 15px; left: 15px; 
+            background: #FF5252; width: 45px; height: 45px; 
+            border-radius: 50%; color: white; font-size: 24px; 
+            border: none; cursor: pointer; z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* ২. ভাষা সিলেক্ট ডিজাইন */
-        .lang-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 80%;
-        }
-        .lang-card {
-            background: white; padding: 20px; border-radius: 15px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1); cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .lang-card:active { transform: scale(0.95); background: #e0f7fa; }
-        .flag { font-size: 40px; display: block; }
-        .lang-name { font-size: 18px; font-weight: bold; color: #333; margin-top: 5px; display: block;}
-
-        /* ৩. বই/পড়া ডিজাইন */
-        .word-card {
-            background: white; width: 85%; height: 75%;
-            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            position: relative; display: flex; flex-direction: column;
+        /* কার্ড ডিজাইন */
+        .card {
+            background: white; width: 90%; height: 80%;
+            border-radius: 25px; border: 4px solid var(--primary);
+            display: flex; flex-direction: column;
             align-items: center; justify-content: space-evenly;
+            position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             padding: 10px;
         }
-        .main-image { font-size: 80px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); }
-        
-        .main-text {
-            font-size: 35px; color: #E91E63; font-weight: bold;
-            margin: 10px 0; cursor: pointer;
-        }
-        
-        .other-langs {
-            background: #f1f8e9; width: 90%; padding: 10px;
-            border-radius: 10px; text-align: left; font-size: 14px;
-        }
-        .other-row { display: flex; justify-content: space-between; margin: 5px 0; border-bottom: 1px solid #ddd; }
 
-        /* নেভিগেশন বাটন */
-        .nav-btn {
-            background: #2196F3; color: white; border: none;
-            width: 50px; height: 50px; border-radius: 50%;
-            font-size: 20px; position: absolute; bottom: 20px; cursor: pointer;
+        /* কন্টেন্ট ডিজাইন */
+        .big-letter { 
+            font-size: 80px; color: var(--secondary); 
+            font-weight: bold; margin: 0; line-height: 1; 
+            text-shadow: 2px 2px 0px #eee;
         }
-        .prev { left: 20px; background: #FF9800; }
-        .next { right: 20px; }
-        .home-btn { position: absolute; top: 10px; left: 10px; font-size: 24px; cursor: pointer; z-index: 100;}
+        
+        /* ছবি রাখার বক্স */
+        .image-container {
+            height: 40%; width: 100%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* গণনার জন্য ইমোজি গ্রিড (যাতে ১০টা ধরানো যায়) */
+        .counting-grid { 
+            display: flex; flex-wrap: wrap; 
+            justify-content: center; align-content: center;
+            gap: 5px; max-width: 90%; height: 100%;
+        }
+        
+        .main-img { font-size: 80px; animation: bounce 2s infinite; }
+        
+        /* ছোট ইমোজি (গণনার সময়) */
+        .count-img { font-size: 40px; margin: 2px; transition: transform 0.2s; }
+        .count-img:hover { transform: scale(1.2); }
 
-        /* এনিমেশন */
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* পড়ার অংশ */
+        .sentence-box {
+            background: #E8F5E9; padding: 15px; border-radius: 15px; width: 85%;
+            border: 2px dashed #4CAF50; cursor: pointer;
+        }
+        .sentence-box:active { background: #C8E6C9; }
+        
+        .main-sentence { font-size: 24px; color: #333; font-weight: bold; display: block; margin-bottom: 5px;}
+        .pronunciation { font-size: 16px; color: #555; display: block; }
+
+        /* কন্ট্রোল বাটন */
+        .nav-controls { display: flex; gap: 20px; margin-top: 10px; width: 100%; justify-content: center; }
+        .nav-btn { 
+            width: 55px; height: 55px; border-radius: 50%; border: none; 
+            font-size: 28px; cursor: pointer; background: #f0f0f0; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .nav-btn:active { transform: scale(0.95); }
+        .speaker-btn { background: #FFEB3B; color: #333; }
+
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- ১. স্টার্ট স্ক্রিন -->
-    <div id="start-screen" class="screen active">
-        <h1>বাচ্চাদের বিশ্বকোষ</h1>
-        <div class="hero-img" onclick="goToLangSelect()">🌍</div>
-        <p>শিখতে হলে প্লে বাটন চাপুন</p>
-        <button class="start-btn" onclick="goToLangSelect()">Play ▶</button>
+    <!-- ১. হোম স্ক্রিন -->
+    <div id="home-screen" class="screen active">
+        <div style="font-size: 60px;">🎒</div>
+        <h1 style="color: #FF6F61; margin-bottom: 30px;">নার্সারি স্কুল</h1>
+        <button class="btn-big btn-alpha" onclick="selectCategory('alphabet')">🅰️ বর্ণমালা (ABC)</button>
+        <button class="btn-big btn-num" onclick="selectCategory('number')">🔢 গণনা (১-১০)</button>
     </div>
 
-    <!-- ২. ভাষা বা দেশ সিলেক্ট -->
-    <div id="lang-select-screen" class="screen">
-        <h2>ভাষা বেছে নিন</h2>
-        <div class="lang-grid">
-            <div class="lang-card" onclick="startGame('bn')">
-                <span class="flag">🇧🇩</span>
-                <span class="lang-name">বাংলা</span>
-            </div>
-            <div class="lang-card" onclick="startGame('en')">
-                <span class="flag">🇺🇸</span>
-                <span class="lang-name">English</span>
-            </div>
-            <div class="lang-card" onclick="startGame('hi')">
-                <span class="flag">🇮🇳</span>
-                <span class="lang-name">हिन्दी</span>
-            </div>
-            <div class="lang-card" onclick="startGame('ar')">
-                <span class="flag">🇸🇦</span>
-                <span class="lang-name">عربي</span>
-            </div>
-        </div>
+    <!-- ২. ভাষা সিলেক্ট স্ক্রিন -->
+    <div id="lang-screen" class="screen">
+        <button class="btn-home" onclick="goHome()">🏠</button>
+        <h2>ভাষা বেছে নাও</h2>
+        <button class="btn-big" style="background:#009688" onclick="startLearning('bn')">🇧🇩 বাংলা</button>
+        <button class="btn-big" style="background:#3F51B5" onclick="startLearning('en')">🇺🇸 English</button>
+        <button class="btn-big" style="background:#FF5722" onclick="startLearning('hi')">🇮🇳 हिन्दी</button>
+        <button class="btn-big" style="background:#4CAF50" onclick="startLearning('ar')">🇸🇦 العربية</button>
     </div>
 
-    <!-- ৩. মেইন বই পেজ -->
-    <div id="book-screen" class="screen">
-        <div class="home-btn" onclick="goHome()">🏠</div>
+    <!-- ৩. মেইন লার্নিং স্ক্রিন -->
+    <div id="learn-screen" class="screen">
+        <button class="btn-home" onclick="goHome()">🏠</button>
         
-        <div class="word-card">
-            <!-- ছবি -->
-            <div id="display-img" class="main-image">🍎</div>
+        <div class="card">
+            <!-- অক্ষর বা সংখ্যা -->
+            <div id="display-top" class="big-letter">A a</div>
             
-            <!-- সাউন্ড আইকন সহ মেইন শব্দ -->
-            <div id="main-word" class="main-text" onclick="speakCurrent()">...</div>
-            <div style="font-size: 12px; color: gray;">(শব্দ শুনতে ক্লিক করুন 🔊)</div>
-
-            <!-- অন্য ভাষায় তালিকা -->
-            <div class="other-langs" id="other-langs-list">
-                <!-- জাভাস্ক্রিপ্ট দিয়ে এখানে লিস্ট আসবে -->
+            <!-- ছবি বা গণনার বস্তু -->
+            <div id="image-area" class="image-container">
+                <!-- এখানে জাভাস্ক্রিপ্ট দিয়ে ছবি আসবে -->
             </div>
 
-            <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
-            <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
+            <!-- পড়ার অংশ -->
+            <div class="sentence-box" onclick="speakCurrent()">
+                <span id="display-text" class="main-sentence">A for Apple</span>
+                <span id="display-pronun" class="pronunciation">এ - তে অ্যাপেল</span>
+                <div style="margin-top:5px; font-size:12px; color:#888;">🔊 শুনতে ক্লিক করো</div>
+            </div>
+
+            <!-- নেভিগেশন -->
+            <div class="nav-controls">
+                <button class="nav-btn" style="background:#FFCCBC" onclick="changeItem(-1)">❮</button>
+                <button class="nav-btn speaker-btn" onclick="speakCurrent()">🗣</button>
+                <button class="nav-btn" style="background:#C8E6C9" onclick="changeItem(1)">❯</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // ডাটাবেস (এখানে আরও শব্দ যোগ করবেন)
-        const words = [
-            { id: 1, img: "🍎", en: "Apple", bn: "আপেল", hi: "सेब", ar: "تفاحة" },
-            { id: 2, img: "🐱", en: "Cat", bn: "বিড়াল", hi: "बिल्ली", ar: "قطة" },
-            { id: 3, img: "🏠", en: "House", bn: "বাড়ি", hi: "घर", ar: "منزل" },
-            { id: 4, img: "🚗", en: "Car", bn: "গাড়ি", hi: "गाड़ी", ar: "سيارة" },
-            { id: 5, img: "🌞", en: "Sun", bn: "সূর্য", hi: "सूरज", ar: "شمس" },
-            { id: 6, img: "🌧️", en: "Rain", bn: "বৃষ্টি", hi: "बारिश", ar: "مطر" },
-            { id: 7, img: "🦁", en: "Lion", bn: "সিংহ", hi: "शेर", ar: "أسد" }
+        // ==========================================
+        //  ডাটাবেস (A-J এবং 1-10)
+        // ==========================================
+        
+        const alphabets = [
+            {
+                letter: "A a", img: "🍎",
+                data: {
+                    bn: { text: "A for Apple", pron: "এ - তে অ্যাপেল (আপেল)" },
+                    en: { text: "A for Apple", pron: "Apple starts with A" },
+                    hi: { text: "A se Apple", pron: "ए - से एप्पल (सेब)" },
+                    ar: { text: "A - التفاحة", pron: "আলিফ - তুফফাহাহ" }
+                }
+            },
+            {
+                letter: "B b", img: "⚽",
+                data: {
+                    bn: { text: "B for Ball", pron: "বি - তে বল (খেলার বল)" },
+                    en: { text: "B for Ball", pron: "Ball starts with B" },
+                    hi: { text: "B se Ball", pron: "बी - से बॉल (गेंद)" },
+                    ar: { text: "B - كرة", pron: "বা - কুরাহ" }
+                }
+            },
+            {
+                letter: "C c", img: "🐱",
+                data: {
+                    bn: { text: "C for Cat", pron: "সি - তে ক্যাট (বিড়াল)" },
+                    en: { text: "C for Cat", pron: "Cat starts with C" },
+                    hi: { text: "C se Cat", pron: "सी - से कैट (बिल्ली)" },
+                    ar: { text: "C - قطة", pron: "কা - ক্বিত্তাহ" }
+                }
+            },
+            {
+                letter: "D d", img: "🐶",
+                data: {
+                    bn: { text: "D for Dog", pron: "ডি - তে ডগ (কুকুর)" },
+                    en: { text: "D for Dog", pron: "Dog starts with D" },
+                    hi: { text: "D se Dog", pron: "डी - से डॉग (कुत्ता)" },
+                    ar: { text: "D - كلب", pron: "দাল - কালব" }
+                }
+            },
+            {
+                letter: "E e", img: "🐘",
+                data: {
+                    bn: { text: "E for Elephant", pron: "ই - তে এলিফ্যান্ট (হাতি)" },
+                    en: { text: "E for Elephant", pron: "Elephant starts with E" },
+                    hi: { text: "E se Elephant", pron: "ई - से एलीफैंट (हाथी)" },
+                    ar: { text: "E - فيل", pron: "ই - ফীল" }
+                }
+            },
+            {
+                letter: "F f", img: "🐟",
+                data: {
+                    bn: { text: "F for Fish", pron: "এফ - তে ফিশ (মাছ)" },
+                    en: { text: "F for Fish", pron: "Fish starts with F" },
+                    hi: { text: "F se Fish", pron: "एफ - से फिश (मछली)" },
+                    ar: { text: "F - سمكة", pron: "ফা - সামাকাহ" }
+                }
+            },
+            {
+                letter: "G g", img: "🍇",
+                data: {
+                    bn: { text: "G for Grapes", pron: "জি - তে গ্রেপস (আঙ্গুর)" },
+                    en: { text: "G for Grapes", pron: "Grapes starts with G" },
+                    hi: { text: "G se Grapes", pron: "जी - से ग्रेप्स (अंगूर)" },
+                    ar: { text: "G - عنب", pron: "জিম - ইনাব" }
+                }
+            },
+            {
+                letter: "H h", img: "🐴",
+                data: {
+                    bn: { text: "H for Horse", pron: "এইচ - তে হর্স (ঘোড়া)" },
+                    en: { text: "H for Horse", pron: "Horse starts with H" },
+                    hi: { text: "H se Horse", pron: "एच - से हॉर्स (घोड़ा)" },
+                    ar: { text: "H - حصان", pron: "হা - হিসান" }
+                }
+            },
+            {
+                letter: "I i", img: "🍦",
+                data: {
+                    bn: { text: "I for Ice-cream", pron: "আই - তে আইসক্রিম" },
+                    en: { text: "I for Ice-cream", pron: "Ice cream starts with I" },
+                    hi: { text: "I se Ice-cream", pron: "आई - से आइसक्रीम" },
+                    ar: { text: "I - مثلجات", pron: "আই - মুছাল্লাজাত" }
+                }
+            },
+            {
+                letter: "J j", img: "🧃",
+                data: {
+                    bn: { text: "J for Juice", pron: "জে - তে জুস (ফলের রস)" },
+                    en: { text: "J for Juice", pron: "Juice starts with J" },
+                    hi: { text: "J se Juice", pron: "जे - से जूस" },
+                    ar: { text: "J - عصير", pron: "জিম - আসির" }
+                }
+            }
         ];
 
-        let currentLang = 'en'; // ডিফল্ট ভাষা
-        let currentIndex = 0;
+        const numbers = [
+            { digit: "1", img: "☀️", count: 1, 
+              bn: "এক (১) - সূর্য", en: "One (1) - Sun", hi: "एक (१) - सूरज", ar: "واحد (١) - শামস" },
+            { digit: "2", img: "👀", count: 2, 
+              bn: "দুই (২) - চোখ", en: "Two (2) - Eyes", hi: "दो (२) - आँखें", ar: "اثنان (٢) - আইনান" },
+            { digit: "3", img: "🦋", count: 3, 
+              bn: "তিন (৩) - প্রজাপতি", en: "Three (3) - Butterflies", hi: "तीन (३) - तितलियाँ", ar: "ثلاثة (٣) - ফারাসাত" },
+            { digit: "4", img: "🚗", count: 4, 
+              bn: "চার (৪) - গাড়ি", en: "Four (4) - Cars", hi: "चार (४) - गाड़ियाँ", ar: "أربعة (٤) - সাইয়ারা" },
+            { digit: "5", img: "🖐️", count: 5, 
+              bn: "পাঁচ (৫) - আঙ্গুল", en: "Five (5) - Fingers", hi: "पाँच (५) - उंगलियां", ar: "خمسة (٥) - খামসা" },
+            { digit: "6", img: "🎈", count: 6, 
+              bn: "ছয় (৬) - বেলুন", en: "Six (6) - Balloons", hi: "छह (६) - गुब्बारे", ar: "ستة (٦) - সিত্তা" },
+            { digit: "7", img: "🌺", count: 7, 
+              bn: "সাত (৭) - ফুল", en: "Seven (7) - Flowers", hi: "सात (७) - फूल", ar: "سبعة (٧) - সাবআ" },
+            { digit: "8", img: "🍓", count: 8, 
+              bn: "আট (৮) - স্ট্রবেরি", en: "Eight (8) - Strawberries", hi: "आठ (८) - स्ट्रॉबेरी", ar: "ثمانية (٨) - ছামানিয়া" },
+            { digit: "9", img: "✏️", count: 9, 
+              bn: "নয় (৯) - পেন্সিল", en: "Nine (9) - Pencils", hi: "नौ (९) - पेंसिल", ar: "تسعة (٩) - তিসআ" },
+            { digit: "10", img: "🍬", count: 10, 
+              bn: "দশ (১০) - ক্যান্ডি", en: "Ten (10) - Candies", hi: "दस (१०) - कैंडी", ar: "عشرة (١٠) - আশারা" }
+        ];
 
-        // স্ক্রিন চেঞ্জ করার ফাংশন
-        function showScreen(screenId) {
+        // ==========================================
+        //  প্রোগ্রামিং লজিক
+        // ==========================================
+
+        let currentCategory = 'alphabet';
+        let currentLang = 'bn';
+        let currentIndex = 0;
+        let activeList = alphabets;
+
+        function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            document.getElementById(id).classList.add('active');
         }
 
-        function goToLangSelect() {
-            showScreen('lang-select-screen');
+        function selectCategory(cat) {
+            currentCategory = cat;
+            showScreen('lang-screen');
         }
 
         function goHome() {
-            showScreen('start-screen');
+            showScreen('home-screen');
+            window.speechSynthesis.cancel(); // সাউন্ড বন্ধ হবে হোমে গেলে
         }
 
-        // গেম শুরু (ভাষা সিলেক্ট করার পর)
-        function startGame(lang) {
+        function startLearning(lang) {
             currentLang = lang;
             currentIndex = 0;
-            updateBook();
-            showScreen('book-screen');
-            // প্রথমবার লোড হলে একটু ওয়েলকাম সাউন্ড বা শব্দ বলা
-            setTimeout(() => speakCurrent(), 500); 
-        }
-
-        // বই আপডেট করা
-        function updateBook() {
-            const data = words[currentIndex];
+            activeList = (currentCategory === 'alphabet') ? alphabets : numbers;
             
-            // ১. ছবি সেট করা
-            document.getElementById('display-img').innerText = data.img;
+            showScreen('learn-screen');
+            loadContent();
+            // মোবাইল সাউন্ড পলিসির কারণে অটো প্লে মাঝে মাঝে অফ থাকে, তাই টাইমআউট দেওয়া
+            setTimeout(speakCurrent, 600); 
+        }
 
-            // ২. মেইন শব্দ সেট করা (যে ভাষা সিলেক্ট করেছেন)
-            const mainWordDisplay = document.getElementById('main-word');
-            if (currentLang === 'bn') mainWordDisplay.innerText = data.bn;
-            else if (currentLang === 'hi') mainWordDisplay.innerText = data.hi;
-            else if (currentLang === 'ar') mainWordDisplay.innerText = data.ar;
-            else mainWordDisplay.innerText = data.en;
+        function loadContent() {
+            const item = activeList[currentIndex];
+            const imageArea = document.getElementById('image-area');
 
-            // ৩. নিচের লিস্ট আপডেট করা (অন্য সব ভাষা দেখাবে)
-            let html = '';
-            if(currentLang !== 'en') html += `<div class="other-row"><span>English:</span> <b>${data.en}</b></div>`;
-            if(currentLang !== 'bn') html += `<div class="other-row"><span>বাংলা:</span> <b>${data.bn}</b></div>`;
-            if(currentLang !== 'hi') html += `<div class="other-row"><span>हिन्दी:</span> <b>${data.hi}</b></div>`;
-            if(currentLang !== 'ar') html += `<div class="other-row"><span>عربي:</span> <b>${data.ar}</b></div>`;
+            if(currentCategory === 'alphabet') {
+                // অ্যালফাবেট মোড
+                document.getElementById('display-top').innerText = item.letter;
+                
+                // একটা বড় ছবি
+                imageArea.innerHTML = `<span class="main-img">${item.img}</span>`;
+                imageArea.className = "image-container"; // নরমাল ফ্লেক্স
+
+                // টেক্সট সেটআপconst langData = item.data[currentLang];
+                document.getElementById('display-text').innerText = langData.text;
+                document.getElementById('display-pronun').innerText = langData.pron;
             
-            document.getElementById('other-langs-list').innerHTML = html;
+            } else {
+                // ==========================================
+                // নাম্বার মোড (গণনা) এর লজিক
+                // ==========================================
+                
+                document.getElementById('display-top').innerText = item.digit;
+                
+                // সংখ্যার সমান ছবি তৈরি করা (লুপ ব্যবহার করে)
+                let imgsHTML = `<div class="counting-grid">`;
+                for(let i=0; i < item.count; i++) {
+                    imgsHTML += `<span class="count-img">${item.img}</span>`;
+                }
+                imgsHTML += `</div>`;
+                
+                // ছবিগুলো স্ক্রিনে বসানো
+                const imgArea = document.getElementById('image-area');
+                imgArea.innerHTML = imgsHTML;
+                imgArea.className = "image-container"; 
+
+                // টেক্সট সেটআপ (নাম্বারের জন্য)
+                let text = "";
+                if(currentLang === 'bn') text = item.bn;
+                else if(currentLang === 'en') text = item.en;
+                else if(currentLang === 'hi') text = item.hi;
+                else if(currentLang === 'ar') text = item.ar;
+
+                document.getElementById('display-text').innerText = text;
+                
+                // সাবটাইটেল (Instruction)
+                let subTitle = "Count the objects";
+                if(currentLang === 'bn') subTitle = "ছবিগুলো গণনা করো";
+                else if(currentLang === 'hi') subTitle = "छवियों को गिनें";
+                else if(currentLang === 'ar') subTitle = "عد الصور";
+                
+                document.getElementById('display-pronun').innerText = subTitle;
+            }
         }
 
-        // স্লাইড চেঞ্জ করা
-        function changeSlide(direction) {
-            currentIndex += direction;
-            if (currentIndex >= words.length) currentIndex = 0;
-            if (currentIndex < 0) currentIndex = words.length - 1;
-            updateBook();
-            speakCurrent(); // অটোমেটিক সাউন্ড হবে পেজ উল্টালে
+        // পরের বা আগের পেজে যাওয়ার ফাংশন
+        function changeItem(dir) {
+            currentIndex += dir;
+            // শেষ হলে শুরুতে যাবে, শুরুতে থাকলে শেষে যাবে
+            if(currentIndex >= activeList.length) currentIndex = 0;
+            if(currentIndex < 0) currentIndex = activeList.length - 1;
+            
+            window.speechSynthesis.cancel(); // আগের কথা থামালাম
+            loadContent();
+            speakCurrent();
         }
 
-        // সাউন্ড ফাংশন (টেক্সট টু স্পিচ)
+        // কথা বলার ফাংশন (Text to Speech)
         function speakCurrent() {
-            const data = words[currentIndex];
+            const item = activeList[currentIndex];
             let textToSpeak = "";
-            let langCode = "en-US";
+            let langCode = 'en-US';
 
-            // সিলেক্ট করা ভাষা অনুযায়ী সাউন্ড ঠিক করা
-            if (currentLang === 'bn') { textToSpeak = data.bn; langCode = 'bn-BD'; }
-            else if (currentLang === 'hi') { textToSpeak = data.hi; langCode = 'hi-IN'; }
-            else if (currentLang === 'ar') { textToSpeak = data.ar; langCode = 'ar-SA'; }
-            else { textToSpeak = data.en; langCode = 'en-US'; }
+            // ভাষার কোড সেট করা (যাতে উচ্চারণ সঠিক হয়)
+            if(currentLang === 'bn') langCode = 'bn-BD';
+            else if(currentLang === 'hi') langCode = 'hi-IN';
+            else if(currentLang === 'ar') langCode = 'ar-SA';
+            else langCode = 'en-US';
 
-            // কথা বলা
+            // কি বলবে তা ঠিক করা
+            if(currentCategory === 'alphabet') {
+                // বর্ণমালার ক্ষেত্রে
+                textToSpeak = item.data[currentLang].pron; 
+            } else {
+                // সংখ্যার ক্ষেত্রে
+                if(currentLang === 'bn') textToSpeak = item.bn;
+                else if(currentLang === 'en') textToSpeak = item.en;
+                else if(currentLang === 'hi') textToSpeak = item.hi;
+                else if(currentLang === 'ar') textToSpeak = item.ar;
+            }
+
             let utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = langCode;
+            utterance.rate = 0.9; // একটু আস্তে বলবে
             window.speechSynthesis.speak(utterance);
         }
     </script>
-
 </body>
 </html>
