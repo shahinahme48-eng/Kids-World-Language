@@ -1,5 +1,5 @@
 // ==========================================
-//  ডাটাবেস
+//  ডাটাবেস (A-E পর্যন্ত আছে, আপনি Z পর্যন্ত বাড়াবেন)
 // ==========================================
 const alphabetData = {
     bn: [ {l:"অ", i:"🐍", w:"অজগর"}, {l:"আ", i:"🥭", w:"আম"}, {l:"ই", i:"🐭", w:"ইঁদুর"}, {l:"ঈ", i:"🦅", w:"ঈগল"}, {l:"উ", i:"🐪", w:"উট"}, {l:"ক", i:"🍌", w:"কলা"}, {l:"খ", i:"🐰", w:"খরগোশ"} ],
@@ -24,18 +24,14 @@ let currentIndex = 0;
 let activeList = [];
 
 function startApp() {
-    const splash = document.getElementById('splash-screen');
-    splash.style.display = 'none';
-    splash.classList.remove('splash-active');
+    document.getElementById('splash-screen').style.display = 'none';
     document.getElementById('home-screen').classList.add('active');
-    
     const music = document.getElementById('bg-music');
-    if(music) { music.volume = 0.2; music.play().catch(e => console.log("Music failed")); }
+    if(music) { music.volume = 0.2; music.play().catch(e => console.log("Music auto-play blocked")); }
 }
 
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('splash-screen').classList.remove('splash-active');
     document.getElementById(id).classList.add('active');
 }
 
@@ -46,26 +42,18 @@ function goHome() {
 }
 
 // ==========================================
-//  ইউনিভার্সাল ক্যাটাগরি এবং ভাষা প্রসেসিং
+//  ইউনিভার্সাল ক্যাটাগরি এবং ভাষা
 // ==========================================
 function selectCategory(cat) {
     currentCategory = cat;
-    // সব ক্ষেত্রেই ভাষা জানতে চাওয়া হবে
     showScreen('lang-screen');
 }
 
-// ভাষা বাটনে চাপ দিলে কি হবে?
 function processLanguageSelection(lang) {
     currentLang = lang;
-    
-    if (currentCategory === 'quiz') {
-        startQuiz();
-    } else if (currentCategory === 'draw') {
-        startDrawing();
-    } else {
-        // পড়ার জন্য
-        startLearning();
-    }
+    if (currentCategory === 'quiz') startQuiz();
+    else if (currentCategory === 'draw') startDrawing();
+    else startLearning();
 }
 
 // ==========================================
@@ -115,18 +103,15 @@ function speakCurrent() {
     const item = activeList[currentIndex];
     let text = (currentCategory === 'alphabet') ? item.w : item.t;
     let langCode = 'en-US';
-
     if(currentLang === 'bn') langCode = 'bn-BD';
     else if(currentLang === 'hi') langCode = 'hi-IN';
     else if(currentLang === 'ar') langCode = 'ar-SA';
-
     let u = new SpeechSynthesisUtterance(text);
-    u.lang = langCode;
-    window.speechSynthesis.speak(u);
+    u.lang = langCode; window.speechSynthesis.speak(u);
 }
 
 // ==========================================
-//  🧠 কুইজ (Quiz) - এখন ভাষা অনুযায়ী হবে
+//  🧠 কুইজ (Quiz) + কনফেটি ইফেক্ট 🎉
 // ==========================================
 function startQuiz() {
     showScreen('quiz-screen');
@@ -135,13 +120,10 @@ function startQuiz() {
 
 function nextQuestion() {
     document.getElementById('quiz-result').innerText = "";
-    
-    // সিলেক্ট করা ভাষা থেকে ডাটা নেবে
     const list = alphabetData[currentLang]; 
     const correctIndex = Math.floor(Math.random() * list.length);
     const correctItem = list[correctIndex];
     
-    // প্রশ্ন তৈরি (ভাষা অনুযায়ী)
     let qText = "";
     if(currentLang === 'bn') qText = `${correctItem.w} কোনটি?`;
     else if(currentLang === 'hi') qText = `${correctItem.w} कौन सा है?`;
@@ -159,7 +141,6 @@ function nextQuestion() {
     
     const container = document.getElementById('quiz-options');
     container.innerHTML = "";
-    
     options.forEach(opt => {
         let div = document.createElement('div');
         div.className = 'quiz-option';
@@ -173,9 +154,20 @@ function checkAnswer(selected, correct, element) {
     const resBox = document.getElementById('quiz-result');
     if(selected.w === correct.w) {
         element.classList.add('correct');
-        resBox.innerText = "✅ সঠিক!";
+        resBox.innerText = "✅ সঠিক! (Correct)";
         resBox.style.color = "green";
-        let u = new SpeechSynthesisUtterance("Good Job!");
+        
+        // 🎉 কনফেটি ইফেক্ট (Confetti) 🎉
+        try {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FF6F61', '#4CAF50', '#FFEB3B', '#2196F3']
+            });
+        } catch(e) { console.log("Confetti not loaded"); }
+
+        let u = new SpeechSynthesisUtterance("Great Job!");
         window.speechSynthesis.speak(u);
     } else {
         element.classList.add('wrong');
@@ -185,36 +177,30 @@ function checkAnswer(selected, correct, element) {
 }
 
 // ==========================================
-//  🎵 ছড়া (Rhymes) - আপডেট করা হয়েছে
+//  🎵 ছড়া (Rhymes)
 // ==========================================
 function playRhyme(name) {
     window.speechSynthesis.cancel();
-    let text = "";
-    let lang = "en-US";
-    
+    let text = ""; let lang = "en-US";
     if(name === 'ata') { text = "আতা গাছে তোতা পাখি, ডালিম গাছে মৌ। এত ডাকি তবু কথা, কও না কেন বউ।"; lang = "bn-BD"; }
-    else if(name === 'chad') { text = "চাঁদ মামা চাঁদ মামা টিপ দিয়ে যা। চাঁদের কপালে চাঁদ টিপ দিয়ে যা।"; lang = "bn-BD"; }
-    else if(name === 'twinkle') text = "Twinkle, twinkle, little star. How I wonder what you are.";
-    else if(name === 'jony') text = "Johny Johny. Yes Papa? Eating sugar? No, papa. Telling lies? No, papa. Open your mouth. Ha, ha, ha!";
-    else if(name === 'rain') text = "Rain, rain, go away. Come again another day. Little Johnny wants to play.";
-    
+    else if(name === 'chad') { text = "চাঁদ মামা চাঁদ মামা টিপ দিয়ে যা।"; lang = "bn-BD"; }
+    else if(name === 'twinkle') text = "Twinkle, twinkle, little star.";
+    else if(name === 'jony') text = "Johny Johny. Yes Papa?";
+    else if(name === 'rain') text = "Rain rain go away.";
     let u = new SpeechSynthesisUtterance(text);
     u.lang = lang; u.rate = 0.9; u.pitch = 1.1;
     window.speechSynthesis.speak(u);
 }
-
-function stopRhyme() {
-    window.speechSynthesis.cancel();
-}
+function stopRhyme() { window.speechSynthesis.cancel(); }
 
 // ==========================================
-//  🎨 আঁকাআঁকি (Drawing) & Shapes
+//  🎨 আঁকাআঁকি (Drawing)
 // ==========================================
 const canvas = document.getElementById('drawing-board');
 const ctx = canvas.getContext('2d');
 let painting = false;
 let traceIndex = 0;
-let traceMode = 'letter'; // 'letter' or 'shape'
+let traceMode = 'letter';
 let currentShape = '';
 let currentShapeName = '';
 
@@ -223,22 +209,13 @@ function startDrawing() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.strokeStyle = 'black';
-    
-    // ডিফল্ট: সিলেক্ট করা ভাষার প্রথম অক্ষর আসবে
-    traceMode = 'letter';
-    traceIndex = 0; 
-    drawGuide();
+    traceMode = 'letter'; traceIndex = 0; drawGuide();
 }
 
-// শেপ সিলেক্ট করা (ফুল, পাখি...)
 function setTraceShape(icon, name) {
-    traceMode = 'shape';
-    currentShape = icon;
-    currentShapeName = name;
-    drawGuide();
+    traceMode = 'shape'; currentShape = icon; currentShapeName = name; drawGuide();
 }
 
-// অক্ষর পরিবর্তন
 function changeTrace(dir) {
     traceMode = 'letter';
     let max = alphabetData[currentLang].length;
@@ -248,28 +225,14 @@ function changeTrace(dir) {
     drawGuide();
 }
 
-// ওয়াটারমার্ক আঁকা
 function drawGuide() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    let content = "";
-    let label = "";
-
-    if (traceMode === 'letter') {
-        content = alphabetData[currentLang][traceIndex].l;
-        label = "লিখ: " + content;
-    } else {
-        content = currentShape;
-        label = "রং করো: " + currentShapeName;
-    }
-
+    let content = (traceMode === 'letter') ? alphabetData[currentLang][traceIndex].l : currentShape;
+    let label = (traceMode === 'letter') ? "লিখ: " + content : "রং করো: " + currentShapeName;
     document.getElementById('trace-status').innerText = label;
-    
     ctx.save();
-    ctx.font = "bold 250px Arial"; 
-    ctx.fillStyle = "#e0e0e0"; // হালকা কালার
-    ctx.textAlign = "center"; 
-    ctx.textBaseline = "middle";
+    ctx.font = "bold 250px Arial"; ctx.fillStyle = "#e0e0e0"; 
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(content, canvas.width/2, canvas.height/2);
     ctx.restore();
 }
