@@ -1,11 +1,11 @@
 // ==========================================
-//  ডাটাবেস (শব্দ ভান্ডার)
+//  ডাটাবেস
 // ==========================================
 const alphabetData = {
-    bn: [ {l:"অ", i:"🐍", w:"অজগর"}, {l:"আ", i:"🥭", w:"আম"}, {l:"ই", i:"🐭", w:"ইঁদুর"}, {l:"ঈ", i:"🦅", w:"ঈগল"}, {l:"উ", i:"🐪", w:"উট"} ],
-    en: [ {l:"A", i:"🍎", w:"Apple"}, {l:"B", i:"⚽", w:"Ball"}, {l:"C", i:"🐱", w:"Cat"}, {l:"D", i:"🐶", w:"Dog"}, {l:"E", i:"🐘", w:"Elephant"} ],
-    hi: [ {l:"अ", i:"🥣", w:"अनार"}, {l:"आ", i:"🥭", w:"आम"}, {l:"इ", i:"🍭", w:"इमली"}, {l:"ई", i:"🎋", w:"ईख"}, {l:"उ", i:"🦉", w:"उल्लू"} ],
-    ar: [ {l:"أ", i:"🐰", w:"আরনাব"}, {l:"ب", i:"🦆", w:"বাত্তাহ"}, {l:"ت", i:"🍎", w:"তুফফাহাহ"}, {l:"ث", i:"🦊", w:"ছা'লাব"}, {l:"ج", i:"🐪", w:"জামাল"} ]
+    bn: [ {l:"অ", i:"🐍", w:"অজগর"}, {l:"আ", i:"🥭", w:"আম"}, {l:"ই", i:"🐭", w:"ইঁদুর"}, {l:"ঈ", i:"🦅", w:"ঈগল"}, {l:"উ", i:"🐪", w:"উট"}, {l:"ক", i:"🍌", w:"কলা"}, {l:"খ", i:"🐰", w:"খরগোশ"} ],
+    en: [ {l:"A", i:"🍎", w:"Apple"}, {l:"B", i:"⚽", w:"Ball"}, {l:"C", i:"🐱", w:"Cat"}, {l:"D", i:"🐶", w:"Dog"}, {l:"E", i:"🐘", w:"Elephant"}, {l:"F", i:"🐟", w:"Fish"}, {l:"G", i:"🍇", w:"Grapes"} ],
+    hi: [ {l:"अ", i:"🥣", w:"अनार"}, {l:"आ", i:"🥭", w:"आम"}, {l:"इ", i:"🍭", w:"इमली"}, {l:"ई", i:"🎋", w:"ईख"}, {l:"उ", i:"🦉", w:"उल्लू"}, {l:"क", i:"🐢", w:"कछुआ"}, {l:"ख", i:"🐰", w:"खरगोश"} ],
+    ar: [ {l:"أ", i:"🐰", w:"আরনাব"}, {l:"ب", i:"🦆", w:"বাত্তাহ"}, {l:"ت", i:"🍎", w:"তুফফাহাহ"}, {l:"ث", i:"🦊", w:"ছা'লাব"}, {l:"ج", i:"🐪", w:"জামাল"}, {l:"ح", i:"🐴", w:"হিসান"}, {l:"خ", i:"🥒", w:"খিয়ার"} ]
 };
 
 const numberData = {
@@ -16,7 +16,7 @@ const numberData = {
 };
 
 // ==========================================
-//  অ্যাপ কন্ট্রোল (এখানেই ঠিক করা হয়েছে)
+//  অ্যাপ কন্ট্রোল
 // ==========================================
 let currentCategory = 'alphabet';
 let currentLang = 'bn';
@@ -24,50 +24,56 @@ let currentIndex = 0;
 let activeList = [];
 
 function startApp() {
-    // ১. স্প্ল্যাশ স্ক্রিন বন্ধ করা
     const splash = document.getElementById('splash-screen');
     splash.style.display = 'none';
     splash.classList.remove('splash-active');
-
-    // ২. হোম স্ক্রিন চালু করা (আগে এই লাইনটি মিসিং ছিল)
-    const home = document.getElementById('home-screen');
-    home.classList.add('active');
-
-    // ৩. মিউজিক চালু করা
+    document.getElementById('home-screen').classList.add('active');
+    
     const music = document.getElementById('bg-music');
-    if(music) {
-        music.volume = 0.2; 
-        music.play().catch(e => console.log("Music play failed"));
-    }
+    if(music) { music.volume = 0.2; music.play().catch(e => console.log("Music failed")); }
 }
 
 function showScreen(id) {
-    // সব স্ক্রিন থেকে active ক্লাস সরিয়ে ফেলা
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    // স্প্ল্যাশ স্ক্রিন যাতে আর না আসে
     document.getElementById('splash-screen').classList.remove('splash-active');
-    
-    // নতুন স্ক্রিন দেখানো
     document.getElementById(id).classList.add('active');
 }
 
 function goHome() {
     showScreen('home-screen');
     window.speechSynthesis.cancel();
+    stopRhyme();
+}
+
+// ==========================================
+//  ইউনিভার্সাল ক্যাটাগরি এবং ভাষা প্রসেসিং
+// ==========================================
+function selectCategory(cat) {
+    currentCategory = cat;
+    // সব ক্ষেত্রেই ভাষা জানতে চাওয়া হবে
+    showScreen('lang-screen');
+}
+
+// ভাষা বাটনে চাপ দিলে কি হবে?
+function processLanguageSelection(lang) {
+    currentLang = lang;
+    
+    if (currentCategory === 'quiz') {
+        startQuiz();
+    } else if (currentCategory === 'draw') {
+        startDrawing();
+    } else {
+        // পড়ার জন্য
+        startLearning();
+    }
 }
 
 // ==========================================
 //  পড়া (Learning)
 // ==========================================
-function selectCategory(cat) {
-    currentCategory = cat;
-    showScreen('lang-screen');
-}
-
-function startLearning(lang) {
-    currentLang = lang;
+function startLearning() {
     currentIndex = 0;
-    activeList = (currentCategory === 'alphabet') ? alphabetData[lang] : numberData[lang];
+    activeList = (currentCategory === 'alphabet') ? alphabetData[currentLang] : numberData[currentLang];
     showScreen('learn-screen');
     loadContent();
     setTimeout(speakCurrent, 500);
@@ -120,7 +126,7 @@ function speakCurrent() {
 }
 
 // ==========================================
-//  🧠 কুইজ (Quiz)
+//  🧠 কুইজ (Quiz) - এখন ভাষা অনুযায়ী হবে
 // ==========================================
 function startQuiz() {
     showScreen('quiz-screen');
@@ -129,11 +135,20 @@ function startQuiz() {
 
 function nextQuestion() {
     document.getElementById('quiz-result').innerText = "";
-    const list = alphabetData['en']; 
+    
+    // সিলেক্ট করা ভাষা থেকে ডাটা নেবে
+    const list = alphabetData[currentLang]; 
     const correctIndex = Math.floor(Math.random() * list.length);
     const correctItem = list[correctIndex];
     
-    document.getElementById('quiz-question').innerText = `Which is ${correctItem.w}?`;
+    // প্রশ্ন তৈরি (ভাষা অনুযায়ী)
+    let qText = "";
+    if(currentLang === 'bn') qText = `${correctItem.w} কোনটি?`;
+    else if(currentLang === 'hi') qText = `${correctItem.w} कौन सा है?`;
+    else if(currentLang === 'ar') qText = `أين هو ${correctItem.w}؟`;
+    else qText = `Which one is ${correctItem.w}?`;
+
+    document.getElementById('quiz-question').innerText = qText;
     
     let options = [correctItem];
     while(options.length < 4) {
@@ -158,9 +173,9 @@ function checkAnswer(selected, correct, element) {
     const resBox = document.getElementById('quiz-result');
     if(selected.w === correct.w) {
         element.classList.add('correct');
-        resBox.innerText = "✅ সঠিক উত্তর!";
+        resBox.innerText = "✅ সঠিক!";
         resBox.style.color = "green";
-        let u = new SpeechSynthesisUtterance("Correct!");
+        let u = new SpeechSynthesisUtterance("Good Job!");
         window.speechSynthesis.speak(u);
     } else {
         element.classList.add('wrong');
@@ -170,19 +185,21 @@ function checkAnswer(selected, correct, element) {
 }
 
 // ==========================================
-//  🎵 ছড়া (Rhymes)
+//  🎵 ছড়া (Rhymes) - আপডেট করা হয়েছে
 // ==========================================
 function playRhyme(name) {
     window.speechSynthesis.cancel();
     let text = "";
     let lang = "en-US";
     
-    if(name === 'ata') { text = "আতা গাছে তোতা পাখি, ডালিম গাছে মৌ।"; lang = "bn-BD"; }
-    else if(name === 'twinkle') text = "Twinkle, twinkle, little star.";
-    else if(name === 'jony') text = "Johny Johny. Yes Papa?";
+    if(name === 'ata') { text = "আতা গাছে তোতা পাখি, ডালিম গাছে মৌ। এত ডাকি তবু কথা, কও না কেন বউ।"; lang = "bn-BD"; }
+    else if(name === 'chad') { text = "চাঁদ মামা চাঁদ মামা টিপ দিয়ে যা। চাঁদের কপালে চাঁদ টিপ দিয়ে যা।"; lang = "bn-BD"; }
+    else if(name === 'twinkle') text = "Twinkle, twinkle, little star. How I wonder what you are.";
+    else if(name === 'jony') text = "Johny Johny. Yes Papa? Eating sugar? No, papa. Telling lies? No, papa. Open your mouth. Ha, ha, ha!";
+    else if(name === 'rain') text = "Rain, rain, go away. Come again another day. Little Johnny wants to play.";
     
     let u = new SpeechSynthesisUtterance(text);
-    u.lang = lang; u.rate = 0.9; 
+    u.lang = lang; u.rate = 0.9; u.pitch = 1.1;
     window.speechSynthesis.speak(u);
 }
 
@@ -191,43 +208,70 @@ function stopRhyme() {
 }
 
 // ==========================================
-//  🎨 আঁকাআঁকি (Drawing)
+//  🎨 আঁকাআঁকি (Drawing) & Shapes
 // ==========================================
 const canvas = document.getElementById('drawing-board');
 const ctx = canvas.getContext('2d');
 let painting = false;
-let traceIndex = -1;
+let traceIndex = 0;
+let traceMode = 'letter'; // 'letter' or 'shape'
+let currentShape = '';
+let currentShapeName = '';
 
 function startDrawing() {
     showScreen('draw-screen');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.lineWidth = 6; ctx.lineCap = 'round'; ctx.strokeStyle = 'black';
-    traceIndex = 0; currentLang = 'en'; 
-    drawGuideLetter();
+    
+    // ডিফল্ট: সিলেক্ট করা ভাষার প্রথম অক্ষর আসবে
+    traceMode = 'letter';
+    traceIndex = 0; 
+    drawGuide();
 }
 
-function drawGuideLetter() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (traceIndex < 0) {
-        document.getElementById('trace-status').innerText = "সাদা পেজ";
-        return;
-    }
-    let char = alphabetData[currentLang][traceIndex].l;
-    document.getElementById('trace-status').innerText = "লিখ: " + char;
-    ctx.save();
-    ctx.font = "bold 250px Arial"; ctx.fillStyle = "#e0e0e0"; 
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText(char, canvas.width/2, canvas.height/2);
-    ctx.restore();
+// শেপ সিলেক্ট করা (ফুল, পাখি...)
+function setTraceShape(icon, name) {
+    traceMode = 'shape';
+    currentShape = icon;
+    currentShapeName = name;
+    drawGuide();
 }
 
+// অক্ষর পরিবর্তন
 function changeTrace(dir) {
+    traceMode = 'letter';
     let max = alphabetData[currentLang].length;
     traceIndex += dir;
-    if (traceIndex >= max) traceIndex = -1;
-    if (traceIndex < -1) traceIndex = max - 1;
-    drawGuideLetter();
+    if (traceIndex >= max) traceIndex = 0;
+    if (traceIndex < 0) traceIndex = max - 1;
+    drawGuide();
+}
+
+// ওয়াটারমার্ক আঁকা
+function drawGuide() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    let content = "";
+    let label = "";
+
+    if (traceMode === 'letter') {
+        content = alphabetData[currentLang][traceIndex].l;
+        label = "লিখ: " + content;
+    } else {
+        content = currentShape;
+        label = "রং করো: " + currentShapeName;
+    }
+
+    document.getElementById('trace-status').innerText = label;
+    
+    ctx.save();
+    ctx.font = "bold 250px Arial"; 
+    ctx.fillStyle = "#e0e0e0"; // হালকা কালার
+    ctx.textAlign = "center"; 
+    ctx.textBaseline = "middle";
+    ctx.fillText(content, canvas.width/2, canvas.height/2);
+    ctx.restore();
 }
 
 function startPosition(e) { painting = true; draw(e); }
@@ -249,4 +293,4 @@ canvas.addEventListener('touchmove', (e)=>{e.preventDefault();draw(e)});
 
 function setColor(c, b) { ctx.strokeStyle = c; ctx.lineWidth = 6; document.querySelectorAll('.color-btn').forEach(btn=>btn.classList.remove('active-color')); b.classList.add('active-color'); }
 function setEraser() { ctx.strokeStyle = 'white'; ctx.lineWidth = 30; }
-function clearCanvas() { drawGuideLetter(); }
+function clearCanvas() { drawGuide(); }
