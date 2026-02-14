@@ -4,21 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kids Super App</title>
-    <!-- CSS ফাইল লিংক করা -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ১. হোম স্ক্রিন -->
-    <div id="home-screen" class="screen active">
-        <div style="font-size: 60px;">🎒</div>
-        <h1 style="color: #FF6F61; margin-bottom: 20px;">নার্সারি স্কুল</h1>
-        <button class="btn-big btn-alpha" onclick="selectCategory('alphabet')">🅰️ বর্ণমালা (ABC)</button>
-        <button class="btn-big btn-num" onclick="selectCategory('number')">🔢 গণনা (১-১০)</button>
-        <button class="btn-big btn-draw" onclick="startDrawing()">🎨 ম্যাজিক স্লেট (আঁকি)</button>
+    <!-- ১. স্প্ল্যাশ স্ক্রিন (শুরুতে এটা আসবে) -->
+    <div id="splash-screen" class="splash-active">
+        <div class="logo-bounce">🌟</div>
+        <h1>কিডস জোন</h1>
+        <p>খেলি আর শিখি</p>
+        <!-- সাউন্ড চালু করার জন্য এই বাটন জরুরি -->
+        <button class="start-btn-main" onclick="startApp()">শুরু করি ▶</button>
     </div>
 
-    <!-- ২. ভাষা সিলেক্ট স্ক্রিন -->
+    <!-- ব্যাকগ্রাউন্ড মিউজিক (অনলাইন লিংক) -->
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- ২. হোম স্ক্রিন -->
+    <div id="home-screen" class="screen">
+        <div style="font-size: 50px;">🎒</div>
+        <h1 style="color: #FF6F61;">নার্সারি স্কুল</h1>
+        
+        <div class="menu-grid">
+            <button class="btn-menu btn-alpha" onclick="selectCategory('alphabet')">🅰️ বর্ণমালা</button>
+            <button class="btn-menu btn-num" onclick="selectCategory('number')">🔢 গণনা</button>
+            <button class="btn-menu btn-draw" onclick="startDrawing()">🎨 আঁকি</button>
+            <button class="btn-menu btn-quiz" onclick="startQuiz()">🧠 কুইজ</button>
+            <button class="btn-menu btn-rhyme" onclick="showScreen('rhyme-screen')">🎵 ছড়া</button>
+        </div>
+    </div>
+
+    <!-- ৩. ভাষা সিলেক্ট স্ক্রিন -->
     <div id="lang-screen" class="screen">
         <button class="btn-home" onclick="goHome()">🏠</button>
         <h2>ভাষা বেছে নাও</h2>
@@ -28,16 +46,16 @@
         <button class="btn-big" style="background:#4CAF50" onclick="startLearning('ar')">🇸🇦 العربية</button>
     </div>
 
-    <!-- ৩. পড়ার স্ক্রিন -->
+    <!-- ৪. পড়ার স্ক্রিন -->
     <div id="learn-screen" class="screen">
         <button class="btn-home" onclick="goHome()">🏠</button>
         <div class="card">
-            <div id="display-top" class="big-letter">A a</div>
+            <div id="display-top" class="big-letter">A</div>
             <div id="image-area" class="image-container"><span class="main-img">🍎</span></div>
             <div class="sentence-box" onclick="speakCurrent()">
                 <span id="display-text" style="font-size: 22px; font-weight: bold; display:block;">...</span>
                 <span id="display-pronun" style="font-size: 16px; color:#555;">...</span>
-                <div style="font-size:12px; margin-top:5px">🔊</div>
+                <div style="font-size:12px; margin-top:5px">🔊 (শুনতে ক্লিক করো)</div>
             </div>
             <div class="nav-controls">
                 <button class="nav-btn" onclick="changeItem(-1)">❮</button>
@@ -47,14 +65,14 @@
         </div>
     </div>
 
-    <!-- ৪. আঁকাআঁকি স্ক্রিন -->
+    <!-- ৫. আঁকাআঁকি স্ক্রিন -->
     <div id="draw-screen" class="screen">
         <button class="btn-home" onclick="goHome()">🏠</button>
         
-        <!-- নতুন: অক্ষর পরিবর্তনের বাটন -->
+        <!-- অক্ষর পাল্টানোর বাটন -->
         <div class="trace-nav">
             <button class="nav-btn" onclick="changeTrace(-1)">❮</button>
-            <span id="trace-status" style="font-weight:bold; color:#555; font-size: 18px;">সাদা পেজ</span>
+            <span id="trace-status" style="font-weight:bold; color:#555;">সাদা পেজ</span>
             <button class="nav-btn" onclick="changeTrace(1)">❯</button>
         </div>
 
@@ -69,7 +87,28 @@
         </div>
     </div>
 
-    <!-- JS ফাইল লিংক করা -->
+    <!-- ৬. কুইজ স্ক্রিন -->
+    <div id="quiz-screen" class="screen">
+        <button class="btn-home" onclick="goHome()">🏠</button>
+        <h2 id="quiz-question" style="margin-top: 50px;">প্রশ্ন...</h2>
+        <div id="quiz-options" class="quiz-grid"></div>
+        <div id="quiz-result" class="result-box"></div>
+        <button class="btn-big" style="background:#FF9800; margin-top:20px;" onclick="nextQuestion()">পরের প্রশ্ন ➡</button>
+    </div>
+
+    <!-- ৭. ছড়ার স্ক্রিন -->
+    <div id="rhyme-screen" class="screen">
+        <button class="btn-home" onclick="goHome()">🏠</button>
+        <h2>মজার ছড়া</h2>
+        <div class="menu-grid">
+            <button class="btn-menu btn-rhyme" onclick="playRhyme('ata')">🐦 আতা গাছে</button>
+            <button class="btn-menu btn-rhyme" onclick="playRhyme('twinkle')">✨ Twinkle Star</button>
+            <button class="btn-menu btn-rhyme" onclick="playRhyme('jony')">👶 Johny Johny</button>
+            <button class="btn-menu btn-rhyme" onclick="stopRhyme()">⏹ থামাও</button>
+        </div>
+        <div style="margin-top:20px; font-size:60px; animation: bounce 2s infinite;">🎶</div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
