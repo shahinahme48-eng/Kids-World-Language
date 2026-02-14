@@ -3,157 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kids World Language</title>
+    <title>Kids World Language Book</title>
     <style>
-        /* মোবাইল অ্যাপের মত লুক */
+        /* ডিজাইন সেকশন */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
             margin: 0;
-            display: flex;
+            padding: 0;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* স্ক্রিন হাইড/শো করার জন্য */
+        .screen {
+            display: none;
+            height: 100%;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            overflow: hidden; /* স্ক্রল বন্ধ */
-        }
-
-        .card {
-            background: white;
-            width: 85%;
-            height: 70%;
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
-            padding: 20px;
-            position: relative;
+            animation: fadeIn 0.5s;
         }
 
-        .emoji { font-size: 80px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); }
-        
-        .word-container { width: 100%; text-align: center; }
-        
-        .main-word { font-size: 32px; color: #333; font-weight: bold; margin: 10px 0; }
-        
-        .sub-languages {
+        .active { display: flex; }
+
+        /* ১. স্টার্ট স্ক্রিন ডিজাইন */
+        #start-screen { background-color: #FFDEE9; background-image: linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%); }
+        .hero-img { font-size: 100px; animation: bounce 2s infinite; cursor: pointer; }
+        .start-btn {
+            background: #FF6F61; color: white; border: none;
+            padding: 15px 40px; font-size: 22px; border-radius: 50px;
+            margin-top: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* ২. ভাষা সিলেক্ট ডিজাইন */
+        .lang-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            width: 100%;
-            margin-top: 15px;
+            gap: 15px;
+            width: 80%;
         }
-
-        .lang-box {
-            background: #f0f2f5;
-            padding: 8px;
-            border-radius: 10px;
-            font-size: 14px;
-            cursor: pointer; /* ক্লিক করলে সাউন্ড হবে */
+        .lang-card {
+            background: white; padding: 20px; border-radius: 15px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1); cursor: pointer;
+            transition: transform 0.2s;
         }
+        .lang-card:active { transform: scale(0.95); background: #e0f7fa; }
+        .flag { font-size: 40px; display: block; }
+        .lang-name { font-size: 18px; font-weight: bold; color: #333; margin-top: 5px; display: block;}
 
-        .lang-title { font-size: 10px; color: #888; text-transform: uppercase; }
+        /* ৩. বই/পড়া ডিজাইন */
+        .word-card {
+            background: white; width: 85%; height: 75%;
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative; display: flex; flex-direction: column;
+            align-items: center; justify-content: space-evenly;
+            padding: 10px;
+        }
+        .main-image { font-size: 80px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); }
+        
+        .main-text {
+            font-size: 35px; color: #E91E63; font-weight: bold;
+            margin: 10px 0; cursor: pointer;
+        }
+        
+        .other-langs {
+            background: #f1f8e9; width: 90%; padding: 10px;
+            border-radius: 10px; text-align: left; font-size: 14px;
+        }
+        .other-row { display: flex; justify-content: space-between; margin: 5px 0; border-bottom: 1px solid #ddd; }
 
+        /* নেভিগেশন বাটন */
         .nav-btn {
-            position: absolute;
-            bottom: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: none;
-            background: #FF6F61;
-            color: white;
-            font-size: 20px;
-            box-shadow: 0 5px 15px rgba(255,111,97,0.4);
+            background: #2196F3; color: white; border: none;
+            width: 50px; height: 50px; border-radius: 50%;
+            font-size: 20px; position: absolute; bottom: 20px; cursor: pointer;
         }
-        .prev { left: 20px; background: #FFB74D; }
+        .prev { left: 20px; background: #FF9800; }
         .next { right: 20px; }
+        .home-btn { position: absolute; top: 10px; left: 10px; font-size: 24px; cursor: pointer; z-index: 100;}
 
-        /* স্পিকার আইকন */
-        .speaker-icon { font-size: 12px; margin-left: 5px; }
+        /* এনিমেশন */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <div id="emoji" class="emoji">🍎</div>
-        
-        <div class="word-container">
-            <div class="main-word" id="enWord" onclick="speak('en')">Apple 🔊</div>
-            
-            <div class="sub-languages">
-                <div class="lang-box" onclick="speak('bn')">
-                    <div class="lang-title">বাংলা</div>
-                    <span id="bnWord">আপেল</span>
-                </div>
-                <div class="lang-box" onclick="speak('hi')">
-                    <div class="lang-title">हिन्दी</div>
-                    <span id="hiWord">सेब</span>
-                </div>
-                <div class="lang-box" onclick="speak('ar')">
-                    <div class="lang-title">العربية</div>
-                    <span id="arWord">تفاحة</span>
-                </div>
-                <div class="lang-box" onclick="speak('es')">
-                    <div class="lang-title">Spanish</div>
-                    <span id="esWord">Manzana</span>
-                </div>
+    <!-- ১. স্টার্ট স্ক্রিন -->
+    <div id="start-screen" class="screen active">
+        <h1>বাচ্চাদের বিশ্বকোষ</h1>
+        <div class="hero-img" onclick="goToLangSelect()">🌍</div>
+        <p>শিখতে হলে প্লে বাটন চাপুন</p>
+        <button class="start-btn" onclick="goToLangSelect()">Play ▶</button>
+    </div>
+
+    <!-- ২. ভাষা বা দেশ সিলেক্ট -->
+    <div id="lang-select-screen" class="screen">
+        <h2>ভাষা বেছে নিন</h2>
+        <div class="lang-grid">
+            <div class="lang-card" onclick="startGame('bn')">
+                <span class="flag">🇧🇩</span>
+                <span class="lang-name">বাংলা</span>
+            </div>
+            <div class="lang-card" onclick="startGame('en')">
+                <span class="flag">🇺🇸</span>
+                <span class="lang-name">English</span>
+            </div>
+            <div class="lang-card" onclick="startGame('hi')">
+                <span class="flag">🇮🇳</span>
+                <span class="lang-name">हिन्दी</span>
+            </div>
+            <div class="lang-card" onclick="startGame('ar')">
+                <span class="flag">🇸🇦</span>
+                <span class="lang-name">عربي</span>
             </div>
         </div>
+    </div>
 
-        <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
-        <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
+    <!-- ৩. মেইন বই পেজ -->
+    <div id="book-screen" class="screen">
+        <div class="home-btn" onclick="goHome()">🏠</div>
+        
+        <div class="word-card">
+            <!-- ছবি -->
+            <div id="display-img" class="main-image">🍎</div>
+            
+            <!-- সাউন্ড আইকন সহ মেইন শব্দ -->
+            <div id="main-word" class="main-text" onclick="speakCurrent()">...</div>
+            <div style="font-size: 12px; color: gray;">(শব্দ শুনতে ক্লিক করুন 🔊)</div>
+
+            <!-- অন্য ভাষায় তালিকা -->
+            <div class="other-langs" id="other-langs-list">
+                <!-- জাভাস্ক্রিপ্ট দিয়ে এখানে লিস্ট আসবে -->
+            </div>
+
+            <button class="nav-btn prev" onclick="changeSlide(-1)">❮</button>
+            <button class="nav-btn next" onclick="changeSlide(1)">❯</button>
+        </div>
     </div>
 
     <script>
-        const data = [
-            { em: "🍎", en: "Apple", bn: "আপেল", hi: "सेब", ar: "تفاحة", es: "Manzana" },
-            { em: "🐱", en: "Cat", bn: "বিড়াল", hi: "बिल्ली", ar: "قطة", es: "Gato" },
-            { em: "🐶", en: "Dog", bn: "কুকুর", hi: "कुत्ता", ar: "كلب", es: "Perro" },
-            { em: "🚗", en: "Car", bn: "গাড়ি", hi: "गाड़ी", ar: "سيارة", es: "Coche" },
-            { em: "🌧️", en: "Rain", bn: "বৃষ্টি", hi: "बारिश", ar: "مطر", es: "Lluvia" }
+        // ডাটাবেস (এখানে আরও শব্দ যোগ করবেন)
+        const words = [
+            { id: 1, img: "🍎", en: "Apple", bn: "আপেল", hi: "सेब", ar: "تفاحة" },
+            { id: 2, img: "🐱", en: "Cat", bn: "বিড়াল", hi: "बिल्ली", ar: "قطة" },
+            { id: 3, img: "🏠", en: "House", bn: "বাড়ি", hi: "घर", ar: "منزل" },
+            { id: 4, img: "🚗", en: "Car", bn: "গাড়ি", hi: "गाड़ी", ar: "سيارة" },
+            { id: 5, img: "🌞", en: "Sun", bn: "সূর্য", hi: "सूरज", ar: "شمس" },
+            { id: 6, img: "🌧️", en: "Rain", bn: "বৃষ্টি", hi: "बारिश", ar: "مطر" },
+            { id: 7, img: "🦁", en: "Lion", bn: "সিংহ", hi: "शेर", ar: "أسد" }
         ];
 
-        let index = 0;
+        let currentLang = 'en'; // ডিফল্ট ভাষা
+        let currentIndex = 0;
 
-        function loadSlide() {
-            const item = data[index];
-            document.getElementById('emoji').innerText = item.em;
-            document.getElementById('enWord').innerHTML = item.en + ' 🔊';
-            document.getElementById('bnWord').innerText = item.bn;
-            document.getElementById('hiWord').innerText = item.hi;
-            document.getElementById('arWord').innerText = item.ar;
-            document.getElementById('esWord').innerText = item.es;
+        // স্ক্রিন চেঞ্জ করার ফাংশন
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
         }
 
+        function goToLangSelect() {
+            showScreen('lang-select-screen');
+        }
+
+        function goHome() {
+            showScreen('start-screen');
+        }
+
+        // গেম শুরু (ভাষা সিলেক্ট করার পর)
+        function startGame(lang) {
+            currentLang = lang;
+            currentIndex = 0;
+            updateBook();
+            showScreen('book-screen');
+            // প্রথমবার লোড হলে একটু ওয়েলকাম সাউন্ড বা শব্দ বলা
+            setTimeout(() => speakCurrent(), 500); 
+        }
+
+        // বই আপডেট করা
+        function updateBook() {
+            const data = words[currentIndex];
+            
+            // ১. ছবি সেট করা
+            document.getElementById('display-img').innerText = data.img;
+
+            // ২. মেইন শব্দ সেট করা (যে ভাষা সিলেক্ট করেছেন)
+            const mainWordDisplay = document.getElementById('main-word');
+            if (currentLang === 'bn') mainWordDisplay.innerText = data.bn;
+            else if (currentLang === 'hi') mainWordDisplay.innerText = data.hi;
+            else if (currentLang === 'ar') mainWordDisplay.innerText = data.ar;
+            else mainWordDisplay.innerText = data.en;
+
+            // ৩. নিচের লিস্ট আপডেট করা (অন্য সব ভাষা দেখাবে)
+            let html = '';
+            if(currentLang !== 'en') html += `<div class="other-row"><span>English:</span> <b>${data.en}</b></div>`;
+            if(currentLang !== 'bn') html += `<div class="other-row"><span>বাংলা:</span> <b>${data.bn}</b></div>`;
+            if(currentLang !== 'hi') html += `<div class="other-row"><span>हिन्दी:</span> <b>${data.hi}</b></div>`;
+            if(currentLang !== 'ar') html += `<div class="other-row"><span>عربي:</span> <b>${data.ar}</b></div>`;
+            
+            document.getElementById('other-langs-list').innerHTML = html;
+        }
+
+        // স্লাইড চেঞ্জ করা
         function changeSlide(direction) {
-            index += direction;
-            if (index >= data.length) index = 0;
-            if (index < 0) index = data.length - 1;
-            loadSlide();
+            currentIndex += direction;
+            if (currentIndex >= words.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = words.length - 1;
+            updateBook();
+            speakCurrent(); // অটোমেটিক সাউন্ড হবে পেজ উল্টালে
         }
 
-        // অটোমেটিক ভয়েস (Text to Speech)
-        function speak(langCode) {
-            const item = data[index];
-            let text = "";
-            let lang = "en-US";
+        // সাউন্ড ফাংশন (টেক্সট টু স্পিচ)
+        function speakCurrent() {
+            const data = words[currentIndex];
+            let textToSpeak = "";
+            let langCode = "en-US";
 
-            if(langCode === 'en') { text = item.en; lang = "en-US"; }
-            else if(langCode === 'bn') { text = item.bn; lang = "bn-BD"; }
-            else if(langCode === 'hi') { text = item.hi; lang = "hi-IN"; }
-            else if(langCode === 'ar') { text = item.ar; lang = "ar-SA"; }
-            else if(langCode === 'es') { text = item.es; lang = "es-ES"; }
+            // সিলেক্ট করা ভাষা অনুযায়ী সাউন্ড ঠিক করা
+            if (currentLang === 'bn') { textToSpeak = data.bn; langCode = 'bn-BD'; }
+            else if (currentLang === 'hi') { textToSpeak = data.hi; langCode = 'hi-IN'; }
+            else if (currentLang === 'ar') { textToSpeak = data.ar; langCode = 'ar-SA'; }
+            else { textToSpeak = data.en; langCode = 'en-US'; }
 
-            // ব্রাউজারের স্পিচ ইঞ্জিন ব্যবহার করবে
-            let utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = lang;
+            // কথা বলা
+            let utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = langCode;
             window.speechSynthesis.speak(utterance);
         }
-
-        loadSlide();
     </script>
+
 </body>
 </html>
